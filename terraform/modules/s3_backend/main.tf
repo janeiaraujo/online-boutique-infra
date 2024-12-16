@@ -1,9 +1,5 @@
 resource "aws_s3_bucket" "tf_state" {
   bucket = var.bucket_name
-  acl    = "private"
-  versioning {
-    enabled = true
-  }
 
   tags = merge(
     {
@@ -13,6 +9,18 @@ resource "aws_s3_bucket" "tf_state" {
     },
     var.additional_tags
   )
+
+  lifecycle {
+    prevent_destroy = true  # Evita destruição acidental
+    ignore_changes  = [tags]
+  }
+}
+
+resource "aws_s3_bucket_versioning" "tf_state_versioning" {
+  bucket = aws_s3_bucket.tf_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_dynamodb_table" "tf_locks" {
@@ -33,4 +41,8 @@ resource "aws_dynamodb_table" "tf_locks" {
     },
     var.additional_tags
   )
+
+  lifecycle {
+    prevent_destroy = true  # Evita destruição acidental
+  }
 }
