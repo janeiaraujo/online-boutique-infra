@@ -21,6 +21,16 @@ module "eks" {
     }
   }
 
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::605134438205:user/dev"
+      username = "dev"
+      groups   = ["system:masters"]
+    }
+  ]
+
+
   tags = {
     Name        = var.cluster_name
     Environment = var.environment
