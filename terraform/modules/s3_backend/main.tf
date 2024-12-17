@@ -10,10 +10,10 @@ resource "aws_s3_bucket" "tf_state" {
     var.additional_tags
   )
 
-  lifecycle {
-    prevent_destroy = true  # Evita destruição acidental
-    ignore_changes  = [tags]
-  }
+  #lifecycle {
+  #  prevent_destroy = true  # Evita destruição acidental
+  #  ignore_changes  = [tags]
+  #}
 }
 
 resource "aws_s3_bucket_versioning" "tf_state_versioning" {
@@ -42,7 +42,7 @@ resource "aws_dynamodb_table" "tf_locks" {
     var.additional_tags
   )
 
-  lifecycle {
-    prevent_destroy = true  # Evita destruição acidental
-  }
+ # lifecycle {
+ #   prevent_destroy = true  # Evita destruição acidental
+ # }
 }
