@@ -28,17 +28,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Configurar o kubectl
-      - name: Configure kubectl
+      - name: Debug AWS and kubeconfig
         run: |
-          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER }} --region ${{ env.AWS_REGION }}
+          aws sts get-caller-identity
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER }} --region ${{ env.AWS_REGION }} --verbose
+          kubectl config view
           kubectl get nodes
-
+      
       # Aplicar Manifests Kubernetes
       - name: Apply Kubernetes manifests
         run: |
           kubectl apply -k ${{ env.K8S_MANIFEST_PATH }}
-
+      
       # Verificar status dos pods
       - name: Check pod status
         run: |
