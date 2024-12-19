@@ -1,3 +1,23 @@
+# Configuração do Backend S3 para armazenar o estado
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-online-boutique" # Nome do bucket S3
+    key            = "terraform/terraform.tfstate"    # Caminho do arquivo de estado
+    region         = "us-west-2"                      # Região do bucket S3
+    dynamodb_table = "terraform-locks"                # Nome da tabela DynamoDB
+    encrypt        = true                             # Ativa criptografia no S3
+  }
+}
+
+# Módulo S3 Backend para criar S3 Bucket e DynamoDB
+module "s3_backend" {
+  source          = "./modules/s3_backend"
+  bucket_name     = "terraform-state-online-boutique"
+  dynamodb_table  = "terraform-locks"
+  environment     = var.environment
+  additional_tags = var.additional_tags
+}
+
 module "vpc" {
   source = "./modules/vpc"
 
@@ -21,15 +41,6 @@ module "eks" {
   environment       = var.environment
 }
 
-
-module "s3_backend" {
-  source = "./modules/s3_backend"
-
-  bucket_name    = "terraform-state-online-boutique"
-  dynamodb_table = "terraform-locks"
-  environment    = var.environment
-  additional_tags = var.additional_tags
-}
 
 module "rds" {
   source                = "./modules/rds"
